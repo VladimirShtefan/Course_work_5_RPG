@@ -18,7 +18,7 @@ Warrior = Specialization(name='Воин',
                          max_health=60.0,
                          max_stamina=30.0,
                          attack=0.8,
-                         stamina=0.9,
+                         stamina=2.0,
                          armor=1.2,
                          skill=Warrior_ult)
 

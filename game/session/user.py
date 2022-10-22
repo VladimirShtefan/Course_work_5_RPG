@@ -1,38 +1,51 @@
-#
-# class Data:
-#     def __init__(self):
-#         self.path = USERS_JSON
-#
-#     def load_users(self) -> dict:
-#         with open(self.path, 'r', encoding='utf-8') as file:
-#             data = json.load(file)
-#         return data
-#
-#     def write_user(self, data: dict):
-#         with open(self.path, 'w', encoding='utf-8') as file:
-#             json.dump(data, file, indent=4, ensure_ascii=False)
 from game.game_objects.hero.base_hero import Character
+from game.session.battle_statistics import BattleStatistic
 from game.session.controller import Controller
 
 
 class User:
-    def __init__(self, player_id) -> None:
-        self.__game = Controller()
-        self.__player_id = player_id
-        self.__character = None
+    def __init__(self) -> None:
+        self.__position: Controller = Controller()
+        self.__character: Character | None = None
+        self.__enemy_character: Character | None = None
 
     @property
-    def character(self):
+    def character(self) -> Character:
         return self.__character
 
-    def get_status(self) -> str:
-        return self.__game.status_game
+    @property
+    def enemy_character(self) -> Character:
+        return self.__enemy_character
 
-    def start_game(self):
-        self.__game.start_game()
+    def get_status(self) -> str:
+        return self.__position.position_in_game
+
+    def delete_start_position(self) -> None:
+        self.__position.delete_start_position()
 
     def set_next_queue(self) -> str:
-        return self.__game.set_next_queue()
+        return self.__position.set_next_queue()
 
-    def set_user_character(self, character: Character):
-        self.__character = character
+    def set_user_character(self, character: Character) -> None:
+        self.__character: Character = character
+
+    def set_enemy_for_user(self, character: Character) -> None:
+        self.__enemy_character: Character = character
+
+    def hit(self) -> list[str]:
+        attacking: Character = self.__character
+        defensive: Character = self.__enemy_character
+        result_battle = []
+        for _ in range(2):
+            battle = BattleStatistic(attacking=attacking, defensive=defensive)
+            if attacking.check_stamina_for_attack():
+                block = defensive.block()
+                damage: float = attacking.attack(block)
+                result_battle.append(battle.print_log_attacking(damage, block))
+                attacking, defensive = defensive, attacking
+            else:
+                result_battle.append(battle.print_log_attacking())
+                attacking, defensive = defensive, attacking
+                continue
+        return result_battle
+

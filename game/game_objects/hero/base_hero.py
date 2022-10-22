@@ -36,6 +36,23 @@ class Character:
                 self.armor = _armor
                 return
 
+    def check_stamina_for_attack(self) -> bool:
+        return self.weapon.check_enough_stamina(self.unit_class.stamina)
+
+    def attack(self, defensive_block: float) -> float:
+        max_damage: float = self.weapon.damage * self.unit_class.attack
+        damage: float = max(max_damage - defensive_block, 0.0)
+        self.__reduce_health(damage)
+        return damage
+
+    def block(self) -> float:
+        if self.armor.check_enough_stamina(self.unit_class.stamina):
+            return self.armor.defence * self.unit_class.armor
+        return 0.0
+
+    def __reduce_health(self, damage: float) -> None:
+        self.unit_class.max_health -= damage
+
 
 class HeroBuilder:
     def __init__(self, name, unit_class, weapon, armor):
@@ -55,47 +72,3 @@ class HeroBuilder:
         self.__hero.set_weapon(self.__weapon)
         self.__hero.set_hero_armor(self.__armor)
         return self.__hero
-
-
-#
-# class Builder(ABC):
-#     @property
-#     @abstractmethod
-#     def hero(self) -> None:
-#         pass
-
-    # @abstractmethod
-    # def set_hero_name(self, name: str) -> None:
-    #     pass
-    #
-    # @abstractmethod
-    # def set_hero_class(self, hero_class: str) -> None:
-    #     pass
-    #
-    # @abstractmethod
-    # def set_hero_weapon(self, weapon: str) -> None:
-    #     pass
-    #
-    # @abstractmethod
-    # def set_hero_armor(self, armor: str) -> None:
-    #     pass
-
-
-
-
-    # def set_hero_name(self, name) -> None:
-    #     self.__hero.name = name
-    #
-    # def set_hero_class(self, hero_class: str) -> None:
-    #     print(hero_class)
-    #     self.__hero.unit_class = [spec for spec in SPECS if spec.name == hero_class]
-    #
-    # def set_hero_weapon(self, weapon: str) -> None:
-    #     print(weapon)
-    #     weapons = EquipmentItems().equipment.weapons
-    #     self.__hero.weapon = [weapon for weapon in weapons if weapon.name == weapon]
-    #
-    # def set_hero_armor(self, armor: str) -> None:
-    #     print(armor)
-    #     armors = EquipmentItems().equipment.armors
-    #     self.__hero.armor = [armor for armor in armors if armor.name == armor]

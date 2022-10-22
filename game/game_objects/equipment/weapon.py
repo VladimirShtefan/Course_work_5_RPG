@@ -12,10 +12,5 @@ class Weapon:
 
     @property
     def damage(self) -> float:
-        hit = uniform(self.min_damage, self.max_damage)
+        hit = round(uniform(self.min_damage, self.max_damage), 1)
         return hit
-
-    def check_enough_stamina(self, current_stamina: float) -> bool:
-        if current_stamina > self.stamina_per_hit:
-            current_stamina -= self.stamina_per_hit
-            return True

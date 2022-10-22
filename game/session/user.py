@@ -40,8 +40,8 @@ class User:
             battle = BattleStatistic(attacking=attacking, defensive=defensive)
             if attacking.check_stamina_for_attack():
                 block = defensive.block()
-                damage: float = attacking.attack(block)
-                result_battle.append(battle.print_log_attacking(damage, block))
+                max_damage, damage = attacking.attack(block)
+                result_battle.append(battle.print_log_attacking(max_damage, damage, block))
                 attacking, defensive = defensive, attacking
             else:
                 result_battle.append(battle.print_log_attacking())

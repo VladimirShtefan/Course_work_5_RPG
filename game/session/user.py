@@ -1,4 +1,4 @@
-from game.game_objects.hero.base_hero import Character
+from game.game_objects.hero.hero import Character
 from game.session.battle_statistics import BattleStatistic
 from game.session.controller import Controller
 
@@ -38,14 +38,58 @@ class User:
         result_battle = []
         for _ in range(2):
             battle = BattleStatistic(attacking=attacking, defensive=defensive)
+            if defensive.check_die() or attacking.check_die():
+                result_battle.append(
+                    battle.print_log_die(attacking=attacking.check_die(), defensive=defensive.check_die()))
+                break
             if attacking.check_stamina_for_attack():
                 block = defensive.block()
-                max_damage, damage = attacking.attack(block)
-                result_battle.append(battle.print_log_attacking(max_damage, damage, block))
+                damage = attacking.attack(block)
+                defensive.reduce_health(damage)
+                result_battle.append(battle.print_log_attacking(damage))
                 attacking, defensive = defensive, attacking
             else:
                 result_battle.append(battle.print_log_attacking())
                 attacking, defensive = defensive, attacking
-                continue
         return result_battle
 
+    def ult(self) -> list[str]:
+        attacking: Character = self.__character
+        defensive: Character = self.__enemy_character
+        result_battle = []
+        for _ in range(2):
+            battle = BattleStatistic(attacking=attacking, defensive=defensive)
+            if defensive.check_die() or attacking.check_die():
+                result_battle.append(
+                    battle.print_log_die(attacking=attacking.check_die(), defensive=defensive.check_die()))
+                break
+            if attacking.check_stamina_for_ult():
+                damage = attacking.use_ult()
+                defensive.reduce_health(damage)
+                result_battle.append(battle.print_log_ult(damage))
+                attacking, defensive = defensive, attacking
+            else:
+                result_battle.append(battle.print_log_ult())
+                attacking, defensive = defensive, attacking
+        return result_battle
+
+    def pass_turn(self):
+        attacking: Character = self.__enemy_character
+        defensive: Character = self.__character
+        result_battle = []
+        battle = BattleStatistic(attacking=attacking, defensive=defensive)
+        result_battle.append(battle.print_skip_log())
+        if attacking.check_stamina_for_attack():
+            block = defensive.block()
+            damage = attacking.attack(block)
+            defensive.reduce_health(damage)
+            result_battle.append(battle.print_log_attacking(damage))
+            if defensive.check_die():
+                result_battle.append(
+                    battle.print_log_die(attacking=attacking.check_die(), defensive=defensive.check_die()))
+        else:
+            result_battle.append(battle.print_log_attacking())
+        return result_battle
+
+    def end_fight(self) -> None:
+        self.__position.set_next_queue()

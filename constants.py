@@ -8,3 +8,5 @@ USERS_JSON = Path.joinpath(DATA_PATH, 'users.json')
 
 
 QUEUE = ['/', '/choose-hero/', '/choose-enemy/', '/fight/']
+
+RECOVERY_STAMINA_PER_TURN = 1.0

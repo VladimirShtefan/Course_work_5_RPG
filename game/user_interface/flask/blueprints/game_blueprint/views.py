@@ -31,3 +31,38 @@ def hit():
     heroes = {'player': user.character,
               'enemy': user.enemy_character}
     return render_template('fight.html', heroes=heroes, result='', battle_result=''.join(result))
+
+
+@game_blueprint.get('/use-skill/')
+def use_skill():
+    user: User = Game().get_player(remote_addr=request.remote_addr, user_info=request.headers)
+    status: str = user.get_status()
+    if status != '/fight/':
+        return redirect(status)
+    result = user.ult()
+    heroes = {'player': user.character,
+              'enemy': user.enemy_character}
+    return render_template('fight.html', heroes=heroes, result='', battle_result=''.join(result))
+
+
+@game_blueprint.get('/pass-turn/')
+def pass_turn():
+    user: User = Game().get_player(remote_addr=request.remote_addr, user_info=request.headers)
+    status: str = user.get_status()
+    if status != '/fight/':
+        return redirect(status)
+    result = user.pass_turn()
+    heroes = {'player': user.character,
+              'enemy': user.enemy_character}
+    return render_template('fight.html', heroes=heroes, result='', battle_result=''.join(result))
+
+
+@game_blueprint.get('/end-fight/')
+def end_fight():
+    user: User = Game().get_player(remote_addr=request.remote_addr, user_info=request.headers)
+    status: str = user.get_status()
+    if status != '/fight/':
+        return redirect(status)
+    user.end_fight()
+    status: str = user.get_status()
+    return redirect(status)

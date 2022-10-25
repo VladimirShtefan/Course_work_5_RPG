@@ -1,13 +1,10 @@
-from decimal import Decimal, getcontext
 from dataclasses import dataclass, field
 
+from constants import RECOVERY_STAMINA_PER_TURN
 from game.game_objects.equipment.armor import Armor
 from game.game_objects.equipment.equipment import EquipmentItems
 from game.game_objects.equipment.weapon import Weapon
 from game.game_objects.hero.specialization import Specialization, SPECS
-
-
-getcontext().prec = 1
 
 
 @dataclass
@@ -16,8 +13,8 @@ class Character:
     unit_class: Specialization = field(default=None)
     weapon: Weapon = field(default=None)
     armor: Armor = field(default=None)
-    stamina_points: Decimal = field(default=0.0)
-    health_points: Decimal = field(default=Decimal(0.0))
+    stamina_points: float = field(default=0.0)
+    health_points: float = field(default=0.0)
 
     def set_name(self, name: str) -> None:
         self.name = name
@@ -26,8 +23,8 @@ class Character:
         for spec in SPECS:
             if spec.name == unit_class:
                 self.unit_class = spec
-                self.stamina_points = Decimal(spec.max_stamina)
-                self.health_points = Decimal(spec.max_health)
+                self.stamina_points = spec.max_stamina
+                self.health_points = spec.max_health
                 return
 
     def set_weapon(self, weapon: str) -> None:
@@ -46,22 +43,48 @@ class Character:
 
     def check_stamina_for_attack(self) -> bool:
         if self.stamina_points > self.weapon.stamina_per_hit:
-            self.stamina_points -= Decimal(self.weapon.stamina_per_hit)
+            self.stamina_points = round(self.stamina_points - self.weapon.stamina_per_hit, 2)
             return True
 
-    def attack(self, defensive_block: Decimal) -> tuple[Decimal, Decimal]:
-        max_damage: Decimal = Decimal(self.weapon.damage * self.unit_class.attack)
-        damage: Decimal = Decimal(max(max_damage - defensive_block, Decimal(0.0)))
-        self.__reduce_health(damage)
-        return max_damage, damage
+    def attack(self, defensive_block: float) -> float:
+        max_damage: float = round(self.weapon.damage * self.unit_class.attack, 2)
+        damage: float = round(max(max_damage - defensive_block, 0.0), 2)
+        self.__recovery_stamina()
+        return damage
 
-    def block(self) -> Decimal:
+    def check_stamina_for_ult(self) -> bool:
+        return self.stamina_points > self.unit_class.skill.cost
+
+    def use_ult(self) -> float:
+        if not self.unit_class.skill.used:
+            self.unit_class.skill.used = True
+            self.stamina_points = round(self.stamina_points - self.unit_class.skill.cost, 2)
+            return self.unit_class.skill.damage
+        return 0.0
+
+    def block(self) -> float:
         if self.stamina_points > self.armor.stamina_per_turn:
-            return Decimal(self.armor.defence * self.unit_class.armor)
-        return Decimal(0.0)
+            return self.armor.defence * self.unit_class.armor
+        self.__recovery_stamina()
+        return 0.0
 
-    def __reduce_health(self, damage: Decimal) -> None:
-        self.health_points -= damage
+    def __recovery_stamina(self) -> None:
+        recovery_stamina = round(self.stamina_points + RECOVERY_STAMINA_PER_TURN * self.unit_class.stamina, 2)
+        if recovery_stamina > self.unit_class.max_stamina:
+            self.stamina_points = self.unit_class.max_stamina
+        else:
+            self.stamina_points = recovery_stamina
+
+    def reduce_health(self, damage: float) -> None:
+        health = round(self.health_points - damage, 2)
+        if health < 0.0:
+            self.health_points = 0.0
+        else:
+            self.health_points = health
+
+    def check_die(self) -> True:
+        if self.health_points == 0:
+            return True
 
 
 class HeroBuilder:

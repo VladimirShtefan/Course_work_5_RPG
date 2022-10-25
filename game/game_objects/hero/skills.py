@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -6,6 +6,7 @@ class Skill:
     name: str
     damage: float
     cost: float
+    used: bool = field(default=False)
 
 
 Warrior_ult = Skill(name='Свирепый пинок', damage=12.0, cost=6.0)

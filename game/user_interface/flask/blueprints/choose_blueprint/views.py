@@ -1,7 +1,7 @@
 from flask import request, render_template, redirect, Blueprint
 
 from game.game_objects.equipment.equipment import EquipmentItems
-from game.game_objects.hero.base_hero import HeroBuilder
+from game.game_objects.hero.hero import HeroBuilder
 from game.game_objects.hero.specialization import SPECS
 from game.session.game import Game
 from game.session.user import User

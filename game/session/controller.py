@@ -3,7 +3,7 @@ from constants import QUEUE
 
 class Controller:
     def __init__(self) -> None:
-        self.__queue = QUEUE[:]
+        self.__queue: list[str] = QUEUE[:]
 
     @property
     def position_in_game(self) -> str:
@@ -22,5 +22,5 @@ class Controller:
         return self.__reset_queue()
 
     def __reset_queue(self) -> str:
-        self.__queue = QUEUE[:]
+        self.__queue: list[str] = QUEUE[:]
         return self.__queue[0]

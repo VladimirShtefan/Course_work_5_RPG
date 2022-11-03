@@ -6,7 +6,7 @@ from game.user_interface.flask.blueprints.index_blueprint.views import index_blu
 
 
 def init_app(config) -> Flask:
-    flask_app = Flask(__name__)
+    flask_app: Flask = Flask(__name__)
     flask_app.config.from_object(config)
     register_blueprints(flask_app)
     return flask_app

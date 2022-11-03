@@ -35,16 +35,16 @@ class User:
     def hit(self) -> list[str]:
         attacking: Character = self.__character
         defensive: Character = self.__enemy_character
-        result_battle = []
+        result_battle: list = []
         for _ in range(2):
-            battle = BattleStatistic(attacking=attacking, defensive=defensive)
+            battle: BattleStatistic = BattleStatistic(attacking=attacking, defensive=defensive)
             if defensive.check_die() or attacking.check_die():
                 result_battle.append(
                     battle.print_log_die(attacking=attacking.check_die(), defensive=defensive.check_die()))
                 break
             if attacking.check_stamina_for_attack():
-                block = defensive.block()
-                damage = attacking.attack(block)
+                block: float = defensive.block()
+                damage: float = attacking.attack(block)
                 defensive.reduce_health(damage)
                 result_battle.append(battle.print_log_attacking(damage))
                 attacking, defensive = defensive, attacking
@@ -56,15 +56,15 @@ class User:
     def ult(self) -> list[str]:
         attacking: Character = self.__character
         defensive: Character = self.__enemy_character
-        result_battle = []
+        result_battle: list = []
         for _ in range(2):
-            battle = BattleStatistic(attacking=attacking, defensive=defensive)
+            battle: BattleStatistic = BattleStatistic(attacking=attacking, defensive=defensive)
             if defensive.check_die() or attacking.check_die():
                 result_battle.append(
                     battle.print_log_die(attacking=attacking.check_die(), defensive=defensive.check_die()))
                 break
             if attacking.check_stamina_for_ult():
-                damage = attacking.use_ult()
+                damage: float = attacking.use_ult()
                 defensive.reduce_health(damage)
                 result_battle.append(battle.print_log_ult(damage))
                 attacking, defensive = defensive, attacking
@@ -73,15 +73,19 @@ class User:
                 attacking, defensive = defensive, attacking
         return result_battle
 
-    def pass_turn(self):
+    def pass_turn(self) -> list[str]:
         attacking: Character = self.__enemy_character
         defensive: Character = self.__character
-        result_battle = []
-        battle = BattleStatistic(attacking=attacking, defensive=defensive)
+        result_battle: list = []
+        battle: BattleStatistic = BattleStatistic(attacking=attacking, defensive=defensive)
+        if defensive.check_die() or attacking.check_die():
+            result_battle.append(
+                battle.print_log_die(attacking=attacking.check_die(), defensive=defensive.check_die()))
+            return result_battle
         result_battle.append(battle.print_skip_log())
         if attacking.check_stamina_for_attack():
-            block = defensive.block()
-            damage = attacking.attack(block)
+            block: float = defensive.block()
+            damage: float = attacking.attack(block)
             defensive.reduce_health(damage)
             result_battle.append(battle.print_log_attacking(damage))
             if defensive.check_die():

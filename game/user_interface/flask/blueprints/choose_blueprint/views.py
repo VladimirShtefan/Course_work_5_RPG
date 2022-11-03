@@ -1,7 +1,8 @@
-from flask import request, render_template, redirect, Blueprint
+from flask import request, render_template, redirect, Blueprint, jsonify
 
-from game.game_objects.equipment.equipment import EquipmentItems
-from game.game_objects.hero.hero import HeroBuilder
+from exceptions import DataError
+from game.game_objects.equipment.equipment import EquipmentItems, Equipment
+from game.game_objects.hero.hero import HeroBuilder, Character
 from game.game_objects.hero.specialization import SPECS
 from game.session.game import Game
 from game.session.user import User
@@ -18,7 +19,11 @@ def choose_hero():
     user.delete_start_position()
     if status != '/choose-hero/':
         return redirect(status)
-    equipment = EquipmentItems().equipment
+    try:
+        equipment: Equipment = EquipmentItems().equipment
+    except DataError as e:
+        return jsonify({'Код ошибки': e.code,
+                        'Сообщение': f'{e.message}'})
     return render_template('hero_choosing.html', result={'header': 'Выберите класс и экипировку',
                                                          'classes': (spec.name for spec in SPECS),
                                                          'weapons': (weapon.name for weapon in equipment.weapons),
@@ -31,9 +36,9 @@ def create_hero():
     user: User = Game().get_player(remote_addr=request.remote_addr, user_info=request.headers)
     status: str = user.get_status()
     if status == '/choose-hero/':
-        character = HeroBuilder(**request.form).hero
+        character: Character = HeroBuilder(**request.form).hero
         user.set_user_character(character)
-        status = user.set_next_queue()
+        status: str = user.set_next_queue()
         return redirect(status)
     return redirect(status)
 
@@ -44,7 +49,11 @@ def choose_enemy():
     status: str = user.get_status()
     if status != '/choose-enemy/':
         return redirect(status)
-    equipment = EquipmentItems().equipment
+    try:
+        equipment: Equipment = EquipmentItems().equipment
+    except DataError as e:
+        return jsonify({'Код ошибки': e.code,
+                        'Сообщение': f'{e.message}'})
     return render_template('hero_choosing.html', result={'header': 'Выберите класс и экипировку для противника',
                                                          'classes': (spec.name for spec in SPECS),
                                                          'weapons': (weapon.name for weapon in equipment.weapons),
@@ -57,9 +66,9 @@ def get_enemy():
     user: User = Game().get_player(remote_addr=request.remote_addr, user_info=request.headers)
     status: str = user.get_status()
     if status == '/choose-enemy/':
-        character = HeroBuilder(**request.form).hero
+        character: Character = HeroBuilder(**request.form).hero
         user.set_enemy_for_user(character)
-        status = user.set_next_queue()
+        status: str = user.set_next_queue()
         return redirect(status)
     return redirect(status)
 

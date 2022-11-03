@@ -1,9 +1,9 @@
 from flask import request, render_template, redirect, Blueprint
 
+from game.game_objects.hero.hero import Character
 from game.session.game import Game
 from game.session.user import User
 from game.user_interface.flask.path_file import TEMPLATES_PATH
-
 
 game_blueprint = Blueprint('game_blueprint', __name__, template_folder=TEMPLATES_PATH, url_prefix='/fight/')
 
@@ -16,8 +16,8 @@ def fight():
         return redirect(status)
     heroes = {'player': user.character,
               'enemy': user.enemy_character}
-    result = 'Бой начался'
-    battle_result = ''
+    result: str = 'Бой начался'
+    battle_result: str = ''
     return render_template('fight.html', heroes=heroes, result=result, battle_result=battle_result)
 
 
@@ -27,9 +27,9 @@ def hit():
     status: str = user.get_status()
     if status != '/fight/':
         return redirect(status)
-    result = user.hit()
-    heroes = {'player': user.character,
-              'enemy': user.enemy_character}
+    result: list[str] = user.hit()
+    heroes: dict[str, Character] = {'player': user.character,
+                                    'enemy': user.enemy_character}
     return render_template('fight.html', heroes=heroes, result='', battle_result=''.join(result))
 
 
@@ -39,9 +39,9 @@ def use_skill():
     status: str = user.get_status()
     if status != '/fight/':
         return redirect(status)
-    result = user.ult()
-    heroes = {'player': user.character,
-              'enemy': user.enemy_character}
+    result: list[str] = user.ult()
+    heroes: dict[str, Character] = {'player': user.character,
+                                    'enemy': user.enemy_character}
     return render_template('fight.html', heroes=heroes, result='', battle_result=''.join(result))
 
 
@@ -51,9 +51,9 @@ def pass_turn():
     status: str = user.get_status()
     if status != '/fight/':
         return redirect(status)
-    result = user.pass_turn()
-    heroes = {'player': user.character,
-              'enemy': user.enemy_character}
+    result: list[str] = user.pass_turn()
+    heroes: dict[str, Character] = {'player': user.character,
+                                    'enemy': user.enemy_character}
     return render_template('fight.html', heroes=heroes, result='', battle_result=''.join(result))
 
 

@@ -6,7 +6,7 @@ class BattleStatistic:
         self.__attacking: Character = attacking
         self.__defensive: Character = defensive
 
-    def print_log_attacking(self, damage=None):
+    def print_log_attacking(self, damage=None) -> str:
         if damage is None:
             return f' {self.__attacking.name}, попытался использовать {self.__attacking.weapon.name}, ' \
                    f'но у него не хватило выносливости.'
@@ -16,13 +16,13 @@ class BattleStatistic:
         return f' {self.__attacking.name}, используя {self.__attacking.weapon.name}, ' \
                f'наносит удар, но {self.__defensive.armor.name} соперника его останавливает.'
 
-    def print_log_die(self, attacking: bool, defensive: bool):
+    def print_log_die(self, attacking: bool, defensive: bool) -> str:
         if attacking:
             return f' {self.__defensive.name} выиграл битву.'
         elif defensive:
             return f' {self.__attacking.name} выиграл битву.'
 
-    def print_log_ult(self, damage=None):
+    def print_log_ult(self, damage=None) -> str:
         if damage is None:
             return f' {self.__attacking.name}, попытался использовать {self.__attacking.unit_class.skill.name}, ' \
                    f'но у него не хватило выносливости.'
@@ -32,5 +32,5 @@ class BattleStatistic:
         else:
             return f' {self.__attacking.name} уже использовал навык.'
 
-    def print_skip_log(self):
+    def print_skip_log(self) -> str:
         return f' {self.__defensive.name}, пропускает ход.'

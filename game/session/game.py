@@ -4,7 +4,7 @@ from game.session.user import User
 
 
 class Game(object):
-    __players = {}
+    __players: dict = {}
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -26,5 +26,5 @@ class Game(object):
     def get_player(self, remote_addr: str, user_info: dict) -> User:
         player_id: str = self.__get_player_id(remote_addr, user_info)
         if not self.__search_player(player_id):
-            self.__players[player_id] = User()
+            self.__players[player_id]: User = User()
         return self.__players[player_id]

@@ -90,7 +90,7 @@ class Character:
             self.health_points: float = health
 
     def check_die(self) -> True:
-        if self.health_points == 0:
+        if self.health_points <= 0:
             return True
 
 

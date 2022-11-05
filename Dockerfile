@@ -12,4 +12,4 @@ RUN python3 -m pip install --no-cache -r requirements.txt
 COPY . .
 
 #CMD ["flask", "run", "--host=0.0.0.0", "--port=80"]
-CMD ["gunicorn", "run_app:app", "-b", "0.0.0.0:80", "-w", "4", "--log-level=debug"]
+CMD ["gunicorn", "run_app:app", "-b", "0.0.0.0:5000", "-w", "4", "--log-level=debug"]

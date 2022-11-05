@@ -4,4 +4,6 @@ services:
 
   backend:
     image: ${DOCKER_HUB_USERNAME}/flask_cw_5:latest
+    ports:
+      - '80:5000'
     restart: always

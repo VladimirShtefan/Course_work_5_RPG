@@ -3,6 +3,7 @@ version: '3.9'
 services:
 
   backend:
+    image: ${DOCKER_HUB_USERNAME}/flask_cw_5:latest
     build:
       context: .
       dockerfile: Dockerfile

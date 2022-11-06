@@ -1,4 +1,5 @@
 from flask import request, render_template, redirect, Blueprint, jsonify
+from flask_cors import CORS
 
 from exceptions import DataError
 from game.game_objects.equipment.equipment import EquipmentItems, Equipment
@@ -10,6 +11,8 @@ from game.user_interface.flask.path_file import TEMPLATES_PATH
 
 
 choose_blueprint = Blueprint('choose_blueprint', __name__, template_folder=TEMPLATES_PATH)
+
+CORS(choose_blueprint, origins=['http://vshtefan.ga', 'http://127.0.0.1'])
 
 
 @choose_blueprint.get('/choose-hero/')

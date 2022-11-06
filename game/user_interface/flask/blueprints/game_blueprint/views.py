@@ -1,4 +1,5 @@
 from flask import request, render_template, redirect, Blueprint
+from flask_cors import CORS
 
 from game.game_objects.hero.hero import Character
 from game.session.game import Game
@@ -6,6 +7,8 @@ from game.session.user import User
 from game.user_interface.flask.path_file import TEMPLATES_PATH
 
 game_blueprint = Blueprint('game_blueprint', __name__, template_folder=TEMPLATES_PATH, url_prefix='/fight/')
+
+CORS(game_blueprint, origins=['http://vshtefan.ga', 'http://127.0.0.1'])
 
 
 @game_blueprint.get('/')
